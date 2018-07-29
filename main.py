@@ -8,3 +8,6 @@
 # 3. Add pdf as attachment
 # 4. confirmation 
 # 5. Send email
+
+import emailsetup
+import os
