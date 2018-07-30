@@ -24,13 +24,13 @@ Oskar Ahlroth'''
 def make_email_message(user_input):
     print('bill_type', user_input)
     body_message = get_body_message(user_input)
-    email_msg = MIMEMultipart()
-    email_msg['From'] = email_setup.getFromAddress() 
-    email_msg['To'] = email_setup.getSendToAddress(user_input['type_bill'])
-    email_msg['Date'] = formatdate(localtime=True)
-    email_msg['Subject'] = get_subject(user_input['type_bill'])
-    email_msg.attach(MIMEText(body_message))
-    return email_msg
+    email_message = MIMEMultipart()
+    email_message['From'] = email_setup.getFromAddress() 
+    email_message['To'] = email_setup.getSendToAddress(user_input['type_bill'])
+    email_message['Date'] = formatdate(localtime=True)
+    email_message['Subject'] = get_subject(user_input['type_bill'])
+    email_message.attach(MIMEText(body_message))
+    return email_message
 
 def get_body_message(user_input):
     bill_type = get_full_bill_type_name(user_input['type_bill']).capitalize()
@@ -49,7 +49,7 @@ def get_full_bill_type_name(type_bill):
     if type_bill == 'w':
         return WATER
 
-def verify_message(email_msg):
+def verify_message(email_message):
     user_verified = False
     is_ok = None
     while not user_verified:
