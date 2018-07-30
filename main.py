@@ -13,10 +13,9 @@ import user_input, email_handler
 #TODO: split input, email to separate modules, unit tests
 user_inputs = {}
 user_input.get_user_inputs(user_inputs)
-print(user_inputs)
 
-email_handler.make_email_message(user_inputs)
+email_message = email_handler.make_email_message(user_inputs)
 
-email_handler.verify_message()
+email_handler.verify_message(email_message)
 
 email_handler.send_email()
