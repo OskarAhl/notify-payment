@@ -31,7 +31,17 @@ def make_email_message(user_input):
     email_message['Subject'] = get_subject(user_input['type_bill'])
     email_message.attach(MIMEText(body_message))
     # add attachment
+    # 1. find the filepath from name  w/ find()
+    # 2.  attachement = MIMEBase('application', "octet-stream")
+    # part.add_header('Content-Disposition', 'attachment; filename="text.txt"')
+    #    msg.attach(part)
+    find (user_input[''])
     return email_message
+
+def get_path(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
 
 def get_body_message(user_input):
     bill_type = get_full_bill_type_name(user_input['type_bill']).capitalize()

@@ -1,6 +1,5 @@
 # Input: 
 # mandatory - invoice number, type (water (w) or electricity(e), pdf) 
-# optional - email address
 
 # Procedure:
 # 1. find pdf
