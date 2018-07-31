@@ -13,7 +13,7 @@ WATER = 'WATER'
 
 BODY_MESSAGE_TEMPLATE = '''Hi,
 
-Please find attached $BILL_TYPE bill for A-16-13A 
+Please find attached $BILL_TYPE receipt for A-16-13A
 
 Tax Invoice no: $INVOICE_NR
 
@@ -53,7 +53,7 @@ def verify_message(email_message):
     user_verified = False
     is_ok = None
     while not user_verified:
-        print(email_msg)
+        print(email_message)
         is_ok = input('Looks ok? y/n: ').lower()
         if is_ok == 'y' or is_ok == 'n': user_verified = True 
     if is_ok == 'n':
@@ -62,5 +62,14 @@ def verify_message(email_message):
         return False
     return True
 
-def send_email():
+def send_email(email):
+    print(email)
     print('sending email...')
+    conn = smtplib.SMTP('smtp.gmail.com', 587)
+    print(type(conn))
+    conn.ehlo()
+    conn.starttls()
+    conn.login(email_setup.getFromAddress(), email_setup.getEmailCode())
+    conn.sendmail(email_setup.getFromAddress(), email_setup.getSendToAddress('r'), email.as_string())
+    conn.close()
+    print('Done!')
