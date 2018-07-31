@@ -1,4 +1,4 @@
-import os, sys, smtplib
+import os, sys, smtplib, traceback
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
@@ -30,6 +30,7 @@ def make_email_message(user_input):
     email_message['Date'] = formatdate(localtime=True)
     email_message['Subject'] = get_subject(user_input['type_bill'])
     email_message.attach(MIMEText(body_message))
+    # add attachment
     return email_message
 
 def get_body_message(user_input):
@@ -63,13 +64,16 @@ def verify_message(email_message):
     return True
 
 def send_email(email):
-    print(email)
-    print('sending email...')
-    conn = smtplib.SMTP('smtp.gmail.com', 587)
-    print(type(conn))
-    conn.ehlo()
-    conn.starttls()
-    conn.login(email_setup.getFromAddress(), email_setup.getEmailCode())
-    conn.sendmail(email_setup.getFromAddress(), email_setup.getSendToAddress('r'), email.as_string())
-    conn.close()
-    print('Done!')
+    print('preparing to sending email...')
+    try: 
+        conn = smtplib.SMTP('smtp.gmail.com', 587)
+        conn.ehlo()
+        conn.starttls()
+        conn.login(email_setup.getFromAddress(), email_setup.getEmailCode())
+        conn.sendmail(email_setup.getFromAddress(), email_setup.getSendToAddress('r'), email.as_string())
+        conn.close()
+    except Exception as e:
+        print('error while sending the email: ' + str(e))
+        print(traceback.format_exc())
+    finally:
+        print('Done!')
