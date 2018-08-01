@@ -105,4 +105,4 @@ def send_email(email):
         print(traceback.format_exc())
         sys.exit()
     finally:
-        print('Done!, email sent to: '+ send_to)
+        print('Done!')
