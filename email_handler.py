@@ -6,6 +6,8 @@ from email.utils import formatdate
 from email import encoders
 import email_setup
 
+DOWNLOAD_FOLDER_PATH = '/Users/oskarahlroth/Downloads'
+
 SUBJECT = 'DAMEN - A 16 13A'
 ELECTRICITY = 'ELECTRICITY'
 RENT = 'RENT'
@@ -13,7 +15,7 @@ WATER = 'WATER'
 
 BODY_MESSAGE_TEMPLATE = '''Hi,
 
-Please find attached $BILL_TYPE receipt for A-16-13A
+Please find attached $BILL_TYPE bank transfer receipt for A-16-13A
 
 Tax Invoice no: $INVOICE_NR
 
@@ -30,15 +32,27 @@ def make_email_message(user_input):
     email_message['Date'] = formatdate(localtime=True)
     email_message['Subject'] = get_subject(user_input['type_bill'])
     email_message.attach(MIMEText(body_message))
+
     # add attachment
     # 1. find the filepath from name  w/ find()
-    # 2.  attachement = MIMEBase('application', "octet-stream")
-    # part.add_header('Content-Disposition', 'attachment; filename="text.txt"')
-    #    msg.attach(part)
-    find (user_input[''])
+    transfer_receipt_os_path = get_path(user_input['transfer_receipt_filename'], DOWNLOAD_FOLDER_PATH)
+    if not transfer_receipt_os_path:
+        print(user_input['transfer_receipt_filename'] + ' does not seem to exist in: ' + DOWNLOAD_FOLDER_PATH)
+    print('transfer_receipt_os_path', transfer_receipt_os_path)
+
+    part = MIMEBase('application', "octet-stream")
+    try:
+        part.set_payload(open(transfer_receipt_os_path, "rb").read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', 'attachment; filename=' + user_input['transfer_receipt_filename'])
+        email_message.attach(part)
+    except Exception as e:
+        print('error while sending the email: ' + str(e))
+        print(traceback.format_exc())
     return email_message
 
 def get_path(name, path):
+    # TODO: add regex to check if name ends with .pdf else add .pdf
     for root, dirs, files in os.walk(path):
         if name in files:
             return os.path.join(root, name)
