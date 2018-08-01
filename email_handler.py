@@ -78,8 +78,9 @@ def get_full_bill_type_name():
 def verify_message(email_message):
     user_verified = False
     is_ok = None
+
     while not user_verified:
-        print(email_message['To'])
+        print(email_message['Subject'] + '  --- to: ' + email_message['To'])
         is_ok = input('Looks ok? y/n: ').lower()
         if is_ok == 'y' or is_ok == 'n': user_verified = True 
     if is_ok == 'n':
