@@ -6,13 +6,12 @@ from email.utils import formatdate
 from email import encoders
 import email_setup
 
-DOWNLOAD_FOLDER_PATH = '/Users/oskarahlroth/Downloads'
 
+DOWNLOAD_FOLDER_PATH = '/Users/oskarahlroth/Downloads'
 SUBJECT = 'DAMEN - A 16 13A'
 ELECTRICITY = 'ELECTRICITY'
 RENT = 'RENT'
 WATER = 'WATER'
-
 BODY_MESSAGE_TEMPLATE = '''Hi,
 
 Please find attached $BILL_TYPE bank transfer receipt for A-16-13A
@@ -23,22 +22,23 @@ Sincerely,
 
 Oskar Ahlroth'''
 
+bill_type = None
 def make_email_message(user_input):
-    print('bill_type', user_input)
+    global bill_type
+    bill_type = user_input['type_bill'];
     body_message = get_body_message(user_input)
     email_message = MIMEMultipart()
     email_message['From'] = email_setup.getFromAddress() 
-    email_message['To'] = email_setup.getSendToAddress(user_input['type_bill'])
+    email_message['To'] = email_setup.getSendToAddress(bill_type)
     email_message['Date'] = formatdate(localtime=True)
-    email_message['Subject'] = get_subject(user_input['type_bill'])
+    email_message['Subject'] = get_subject(bill_type)
     email_message.attach(MIMEText(body_message))
 
-    # add attachment
-    # 1. find the filepath from name  w/ find()
     transfer_receipt_os_path = get_path(user_input['transfer_receipt_filename'], DOWNLOAD_FOLDER_PATH)
+
     if not transfer_receipt_os_path:
         print(user_input['transfer_receipt_filename'] + ' does not seem to exist in: ' + DOWNLOAD_FOLDER_PATH)
-    print('transfer_receipt_os_path', transfer_receipt_os_path)
+        sys.exit()
 
     part = MIMEBase('application', "octet-stream")
     try:
@@ -57,28 +57,27 @@ def get_path(name, path):
         if name in files:
             return os.path.join(root, name)
 
-def get_body_message(user_input):
-    bill_type = get_full_bill_type_name(user_input['type_bill']).capitalize()
+def get_body_message():
+    bill_type = get_full_bill_type_name(bill_type).capitalize()
     message = BODY_MESSAGE_TEMPLATE.replace('$BILL_TYPE', bill_type).replace('$INVOICE_NR', user_input['invoice_number'])
     return message
 
-def get_subject(type_bill):
-    subject = get_full_bill_type_name(type_bill) + ' ' + SUBJECT
+def get_subject():
+    subject = get_full_bill_type_name(bill_type) + ' ' + SUBJECT
     return subject
 
-def get_full_bill_type_name(type_bill):
-    if type_bill == 'e':
+def get_full_bill_type_name():
+    if bill_type == 'e':
         return ELECTRICITY
-    if type_bill == 'r':
+    if bill_type == 'r':
         return RENT
-    if type_bill == 'w':
+    if bill_type == 'w':
         return WATER
 
 def verify_message(email_message):
     user_verified = False
     is_ok = None
     while not user_verified:
-        print(email_message)
         is_ok = input('Looks ok? y/n: ').lower()
         if is_ok == 'y' or is_ok == 'n': user_verified = True 
     if is_ok == 'n':
@@ -89,15 +88,18 @@ def verify_message(email_message):
 
 def send_email(email):
     print('preparing to sending email...')
+    send_from = email_setup.getFromAddress()
+    send_to = email_setup.getSendToAddress(bill_type),
     try: 
         conn = smtplib.SMTP('smtp.gmail.com', 587)
         conn.ehlo()
         conn.starttls()
         conn.login(email_setup.getFromAddress(), email_setup.getEmailCode())
-        conn.sendmail(email_setup.getFromAddress(), email_setup.getSendToAddress('r'), email.as_string())
+        conn.sendmail(send_from, send_to, email.as_string())
         conn.close()
     except Exception as e:
         print('error while sending the email: ' + str(e))
         print(traceback.format_exc())
+        sys.exit()
     finally:
-        print('Done!')
+        print('Done!, email sent to: '+ send_to)
