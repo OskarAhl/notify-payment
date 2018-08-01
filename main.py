@@ -1,6 +1,8 @@
 # Input: 
 # mandatory - invoice number, type (water (w) or electricity(e), pdf) 
 # Output: Email with corresponding attachment sent
+# TODO: make classes
+
 import user_input, email_handler
 
 user_inputs = {}

@@ -31,7 +31,7 @@ def make_email_message(user_input):
     email_message['From'] = email_setup.getFromAddress() 
     email_message['To'] = email_setup.getSendToAddress(bill_type)
     email_message['Date'] = formatdate(localtime=True)
-    email_message['Subject'] = get_subject(bill_type)
+    email_message['Subject'] = get_subject()
     email_message.attach(MIMEText(body_message))
 
     transfer_receipt_os_path = get_path(user_input['transfer_receipt_filename'], DOWNLOAD_FOLDER_PATH)
@@ -49,6 +49,7 @@ def make_email_message(user_input):
     except Exception as e:
         print('error while sending the email: ' + str(e))
         print(traceback.format_exc())
+
     return email_message
 
 def get_path(name, path):
@@ -57,13 +58,13 @@ def get_path(name, path):
         if name in files:
             return os.path.join(root, name)
 
-def get_body_message():
-    bill_type = get_full_bill_type_name(bill_type).capitalize()
-    message = BODY_MESSAGE_TEMPLATE.replace('$BILL_TYPE', bill_type).replace('$INVOICE_NR', user_input['invoice_number'])
+def get_body_message(user_input):
+    bill_type_full_name = get_full_bill_type_name().capitalize()
+    message = BODY_MESSAGE_TEMPLATE.replace('$BILL_TYPE', bill_type_full_name).replace('$INVOICE_NR', user_input['invoice_number'])
     return message
 
 def get_subject():
-    subject = get_full_bill_type_name(bill_type) + ' ' + SUBJECT
+    subject = get_full_bill_type_name() + ' ' + SUBJECT
     return subject
 
 def get_full_bill_type_name():
@@ -78,6 +79,7 @@ def verify_message(email_message):
     user_verified = False
     is_ok = None
     while not user_verified:
+        print(email_message['To'])
         is_ok = input('Looks ok? y/n: ').lower()
         if is_ok == 'y' or is_ok == 'n': user_verified = True 
     if is_ok == 'n':
