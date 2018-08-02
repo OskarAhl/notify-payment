@@ -15,7 +15,6 @@ WATER = 'WATER'
 BODY_MESSAGE_TEMPLATE = '''Hi,
 
 Please find attached $BILL_TYPE bank transfer receipt for A-16-13A
-
 $INVOICE_NR
 
 Sincerely,        
