@@ -1,6 +1,7 @@
 def get_user_inputs(user_inputs):
-    user_inputs['invoice_number'] = get_required_input('Invoice number: ')
     user_inputs['type_bill'] = get_type_bill('Type - water (w), electricity (e), rent(r): ')
+    if user_inputs['type_bill'] != 'r':
+        user_inputs['invoice_number'] = get_required_input('Invoice number: ')
     user_inputs['transfer_receipt_filename'] = get_required_input('Transfer receipt filename: ')
 
 def get_required_input(input_help_text):

@@ -16,7 +16,7 @@ BODY_MESSAGE_TEMPLATE = '''Hi,
 
 Please find attached $BILL_TYPE bank transfer receipt for A-16-13A
 
-Tax Invoice no: $INVOICE_NR
+$INVOICE_NR
 
 Sincerely,        
 
@@ -60,7 +60,11 @@ def get_path(name, path):
 
 def get_body_message(user_input):
     bill_type_full_name = get_full_bill_type_name().capitalize()
-    message = BODY_MESSAGE_TEMPLATE.replace('$BILL_TYPE', bill_type_full_name).replace('$INVOICE_NR', user_input['invoice_number'])
+    message = BODY_MESSAGE_TEMPLATE.replace('$BILL_TYPE', bill_type_full_name)
+    if bill_type != 'r':
+        message = message.replace('$INVOICE_NR', 'Invoice nr: ' + user_input['invoice_number'])
+    else:
+        message = message.replace('$INVOICE_NR', '')
     return message
 
 def get_subject():
