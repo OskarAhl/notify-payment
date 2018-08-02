@@ -58,7 +58,7 @@ def get_path(name, path):
             return os.path.join(root, name)
 
 def get_body_message(user_input):
-    bill_type_full_name = get_full_bill_type_name().capitalize()
+    bill_type_full_name = get_full_bill_type_name().lower()
     message = BODY_MESSAGE_TEMPLATE.replace('$BILL_TYPE', bill_type_full_name)
     if bill_type != 'r':
         message = message.replace('$INVOICE_NR', 'Invoice nr: ' + user_input['invoice_number'])
