@@ -22,6 +22,7 @@ Sincerely,
 Oskar Ahlroth'''
 
 bill_type = None
+
 def make_email_message(user_input):
     global bill_type
     bill_type = user_input['type_bill'];
@@ -91,6 +92,10 @@ def verify_message(email_message):
         sys.exit()
         return False
     return True
+
+def set_bill_type(type_bill):
+     global bill_type
+     bill_type = type_bill
 
 def send_email(email):
     print('preparing to sending email...')
